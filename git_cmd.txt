@@ -1,0 +1,1575 @@
+################################### Git Commands ######################################
+
+****** configuration
+git config --local http.sslVerify false
+git config --global http.sslVerify false
+git clone 
+git config --global unset http.proxy
+
+****** setup diff tool
+git difftool --tool=meld
+
+
+unset http_proxy
+git config --global –unset http.proxy
+
+
+**************************** Create a branch *********************
+### create local and remote branch
+git checkout -b <branch>
+git push -u origin <branch>
+
+#### create a branch from another branch
+git checkout -b <new branch> <old branch>
+
+#### create a branch from a remote branch
+git checkout -b <test> <name of remote>/<test>
+
+#### create a empty branch
+git checkout --orphan <branch-name>
+git rm -rf .
+
+### clone and create a new branch
+git clone -b <remote branch> http://sere
+
+************************ Delete branch **********************************
+#### delete local and remote branch
+git branch -d <branch>
+git push origin --delete <branch>
+
+
+************************* List branch *******************************
+#### list remote branches
+git branch -r
+### list all branches loca and remote
+git branch -a
+
+*************************** List/Diff ***********************************
+### list all commits in this branch
+git log
+
+### check local commits against origin/<branch>
+git log origin/master..HEAD
+git diff origin/master..HEAD
+
+### list all the files in a commit
+git diff-tree --no-commit-id --name-only -r bd61ad98
+
+#### diff all differences in one shot with tool
+git difftool --staged -yd
+
+
+*********************** Check in ***************************
+## check in
+git pull    # get latest versiong
+git add <filename>
+git commit -m "added chapter 1,2" .
+git push origin master
+
+
+************************* Reset private changes *******************************
+## revert a local uncached change 
+git checkout .
+
+## revvert changes made to the index
+git reset .
+
+## revert untracked files(newly add files, generated files)
+git clean -f
+git clean -fd    # untracked directories.
+
+************************* Revert public changes *******************************
+
+## revert a change which has been committed
+git revert <commit 1> <commit 1>
+ 
+### Delete the last commit on remote repo
+$ git reset HEAD^ --hard
+$ git push <origin> -f
+or 
+$ git push <origin> +<commit>^:master
+
+### Delete any commit on remote repo
+$ git rebase -i <commit>^
+edit pick table
+$ git push <origin> -f
+
+### 想让文件保留在磁盘，但是并不想让 Git 继续跟踪。 当你忘记添加 .gitignore 文件，不小心把一个很大的日志文件或一堆 .a 
+### 这样的编译生成文件添加到暂存区时，这一做法尤其有用。 为达到这一目的，使用 --cached 选项：
+git rm --cached <filename>
+
+
+************************ Rebase *******************************
+#### force pull to latest
+git fetch --all
+git reset --hard HEAD
+git pull origin master
+
+### sync local to remote's everything
+git checkout <branch_name>
+git pull <remote> <branch_name>
+
+### merge local change with remote's latest
+git checkout <branch_name>
+git fetch <remote>
+git merge <remote>/<branch_name>
+or git rebase <remote>/<branch_name>
+git push <remote> <branch_name>
+
+### rebase to one branch
+git fetch <origin>
+git rebase <branch>
+git rebase --continue
+
+### sync to remote and throw away local change
+git checkout -b <branch>
+git fetch <branch_name>
+git reset --hard <remote>/<branch_name>
+
+### merge a deritive branch back to old branch
+git checkout <old branch>
+git merge --no-ff <new branch>
+
+#### merge from a commit
+git merge --allow-unrelated-histories <commit-id> 
+
+### Squash some commits into one commit
+git rebase -i HEAD~<n>      ## -i interactive, from HEAD back n commits.
+
+pick 01d1124 Adding license
+pick 6340aaa Moving license into its own file
+pick ebfd367 Jekyll has become self-aware.
+pick 30e0ccb Changed the tagline in the binary, too.
+------>
+pick 01d1124 Adding license
+squash 6340aaa Moving license into its own file
+squash ebfd367 Jekyll has become self-aware.
+squash 30e0ccb Changed the tagline in the binary, too.
+####
+
+
+******** sync fork repo from original repo
+1. Clone your fork
+git clone git@github.com:YOUR-USERNAME/YOUR-FORKED-REPO.git
+2. Add a new remote from original repository in your forked repository:
+cd cloned/fork-repo
+git remote add <new-origin> <git://github.com/ORIGINAL-DEV-USERNAME/REPO-YOU-FORKED-FROM.git>
+git fetch <new-origin>
+3. Updating your fork from original repo to keep up with their changes:
+git pull <new-origin> <branch>
+
+
+*************************** Rename  *****************************
+### rename in the git index
+git mv file_from file_to
+
+
+************************* Stash **************************
+### save the working on specific day
+git stash
+
+#####################################################################################
+
+
+
+###############################  Linux Commands   ##################################################  
+
+*************************** file process **********************************
+
+############## find a word in files
+grep -rnw '/path/to/somewhere/' -e 'pattern'
+-r or -R is recursive,
+-n is line number, and
+-w stands for match the whole word.
+-l (lower-case L) can be added to just give the file name of matching files.
+
+Along with these, --exclude, --include, --exclude-dir flags could be used for efficient searching:
+This will only search through those files which have .c or .h extensions:
+grep --include=\*.{c,h} -rnw '/path/to/somewhere/' -e "pattern"
+
+This will exclude searching all the files ending with .o extension:
+grep --exclude=*.o -rnw '/path/to/somewhere/' -e "pattern"
+
+#grep recursive in certain files
+grep -e "word" -r --include \*.ext
+#example: grep -e "dependencies" -r --include \*.yaml
+
+# recursively list file name
+ls -LR | grep .txt
+
+# list one file name in absolute path
+find "$(cd ..; pwd)" -name "filename"
+
+# find one file recursively
+find / -name "filename"
+
+
+############## file copying
+
+#copy files between linux machines:
+scp -r tux@sun.example.com:/foo_directory .
+
+
+################ download file
+
+# wget without authentication
+sudo wget --no-check-certificate gopkg.in/yaml.v2
+
+# how to get pgp key from website
+sue wget --no-check-certificate -q -O - <https://packages.cloud.google.com/apt/doc/apt-key.gpg> | sudo apt-key add -
+
+# how to directly get kubenetes binary release
+sue wget --no-check-certificate https://storage.googleapis.com/kubernetes-release/release/v1.6.6/bin/linux/amd64/kubectl
+sue wget --no-check-certificate https://storage.googleapis.com/kubernetes-release/release/v1.6.6/bin/linux/amd64/kubelet
+
+
+################ extract archive file
+# extract gz file
+tar zxvf <file>.gz
+
+# extract bz2 file
+tar -xvjf <file>.bz2
+
+################# file permission
+
+# recursively change folder's subfolder permission
+sudo chmod -R a+w ./
+
+
+******************************** system processing  ******************************
+
+################ version
+
+uname -a for all information regarding the kernel version,
+uname -r for the exact kernel version
+lsb_release -afor all information related to the Ubuntu version,
+cat /proc/version
+
+
+############### system performance
+
+# list all process status
+ps -ef
+
+ps -p
+
+# display linux processes
+top
+
+# dispaly free and used memory
+free
+
+#find disk usage
+$df
+$du -sh
+
+
+############ history
+1. display timestamp using HISTTIMEFORMAT
+$export HISTTIMEFORMAT='%F %T '
+$history | more
+2. Search the history using Ctrl+R, -> or <- to edit.
+3. Repeat previous commands. 
+up arror to the one and enter to execute.
+or   !! and enter
+or   !-1 and enter
+or   Ctrl+p and enter
+4. Execute a specfic command
+!<number> and enter
+5. Execute a command that starts with a specific word
+!<prefix> enter
+6. Clear all the previous history
+$ history -
+
+
+************************* etc commands  ************************
+source < (kubectl complettion bash)
+
+
+************************* network commands  ************************
+# list all listening ports
+netstat -lnput
+
+sudo ip netns add namespace1
+sudo ip netns add namespace2
+sudo ip link add ipvlan1 link ens3 type ipvlan mode l3
+sudo ip link add ipvlan2 link ens3 type ipvlan mode l3
+sudo ip link set ipvlan1 netns namespace1
+sudo ip link set ipvlan2 netns namespace2
+sudo ip netns exec namespace1 ip address add 10.10.20.10/24 dev ipvlan1
+sudo ip netns exec namespace2 ip address add 10.10.30.10/24 dev ipvlan2
+sudo ip netns exec namespace1 ip link set dev ipvlan1 up
+sudo ip netns exec namespace2 ip link set dev ipvlan2 up
+sudo ip netns exec namespace1 ip route add default dev ipvlan1
+sudo ip netns exec namespace2 ip route add default dev ipvlan2
+
+sudo ip netns add namespace1
+sudo ip netns add namespace2
+sudo ip link add ipvlan1 link ens3 type ipvlan mode l3
+sudo ip link add ipvlan2 link ens3 type ipvlan mode l3
+sudo ip link set ipvlan1 netns namespace1
+sudo ip link set ipvlan2 netns namespace2
+sudo ip netns exec namespace1 ip address add 10.10.40.10/24 dev ipvlan1
+sudo ip netns exec namespace2 ip address add 10.10.40.11/24 dev ipvlan2
+sudo ip netns exec namespace1 ip link set dev ipvlan1 up
+sudo ip netns exec namespace2 ip link set dev ipvlan2 up
+sudo ip netns exec namespace1 ip route add default dev ipvlan1
+sudo ip netns exec namespace2 ip route add default dev ipvlan2
+
+######### list port information
+lsof -i :port -S
+netstat -a | grep <port>
+
+###### find nic speed
+dmesg | grep <eth interface>
+or
+cat /sys/class/net/<interface>/speed
+
+###### set mtu size
+ip link set <eth0> mtu 9000
+
+
+#################################################################################################
+
+
+
+##########################################  Linux Tools #########################################################
+
+************************ vi commands ************************
+
+########## select all and copy
+You should yank the text to the * or + registers:
+gg"*yG
+Explanation:
+gg
+gets the cursor to the first character of the file
+"*y
+Starts a yank command to the register * from the first line, until...
+G
+go the end of the file
+
+######cut-and-paste or copy-and-paste:
+1. Position the cursor at the beginning of the text you want to cut/copy.
+2. Press v to begin character-based visual selection, or V to select whole lines, or Ctrl-v or Ctrl-q to select a block.
+3. Move the cursor to the end of the text to be cut/copied. While selecting text, you can perform searches and other advanced movement.
+4. Press d (delete) to cut, or y (yank) to copy.
+5. Move the cursor to the desired paste location.
+6. Press p to paste after the cursor, or P to paste before.
+Visual selection (steps 1-3) can be performed using a mouse.
+
+If you want to change the selected text, press c instead of d or y in step 4. In a visual selection, pressing c performs a change by deleting the selected text and entering insert mode so you can type the new text.
+
+##### display line number #######
+: set number.
+
+#### ignore case  ####
+:set ic
+
+##### find and replace #####
+:%s/<source>/<target>/g        // replace across whole file.
+:m,ns/<source>/<target>/g      // replace between m and n line
+:m,n&&                         // repeats the last substitution between m and n lines
+
+##### delete lines #####
+:<n>d                // delete nth line
+:<m>,<n>d            // delete lines from m to n
+5dd                  // delete 5 lines from current line
+d5d                  // delete 5 lines from current line
+
+
+##### delete letters #######
+:d<n>l               // delete n letters from current position.
+
+
+
+****************************** TMUX ****************************
+##### install tmux
+sudo -E apt-get update
+sudo -E apt-get install tmux
+
+$tmux ls
+
+$tmux attach -t <session number>
+
+
+
+
+
+********************************* fio *************************************
+fio --name=randwrite --ioengine=sync --iodepth=1 --rw=randread --bs=32k --direct=1 --size=5G --numjobs=8 --group_reporting --directory=/var/test --runtime=300
+
+
+************************ LVM ******************************
+##### initialization
+1. Create Physical Volume
+2. Create Volume Group
+3. Check Volume Group
+
+##### Create Volume
+1. Create the logical volume
+2. Set the file system type.
+3. Create the directory, mount point
+4. Mount the logical volume to the above directory
+5. Add the entry to the fstab.
+
+##### Delete Volume
+1. Remove the entry from the fstab
+2. Unmount the logical volume from the moint point
+3. Delete the mount point, i.e. the directory
+4. Zero out the logical volume content.
+5. Delete the Logical Volume.
+
+
+****************************** vGpu driver installation *************************
+
+cp < NVIDIALinux_x86_64-352.47-grid.run>
+sudo service lightdm stop
+sudo sh ./ NVIDIA-Linux_x86_64-352.47-grid.run
+nvidia-settings.
+
+aws ec2 allocate-hosts --instance-type "g3.4xlarge" --availability-zone "us-west-2c" --auto-placement "off" --quantity 1 --region us-west-2
+
+
+
+############ create missed nvidia-uvm 
+mknod -m 660 /dev/nvidia-uvm c 249 0
+chgrp video /dev/nvidia-uvm
+
+
+############### GPU debug steps 
+0. GPU driver installation:
+	cd /github.com/GoogleCloudPlatform/Container-Engine-Accelarator/nvidia-driver-installer/ubuntu/
+	0.1 execute ./entrypoint.sh or
+or	0.2 kubectl create -f daemonset.yaml
+	0.3 execute nvidia-smi to verify.
+1. on master side
+   cd /root/go/k8s-setup
+   ./k8s-master-up.sh
+   
+2. on slave side 
+	./k8s-slave-up.sh
+
+3. on master side
+   kubectl create -f calico.yaml
+   
+4. check existence of /dev/nvidia-uwm, if not create it by above command line.
+Note: make sure all test device plugin and pod are deleted before the testing.
+
+5. execute "kubectl get no" to make sure this node is on.
+
+6. create GPU device plugin by running "kubectl create -f cluster/addons/device-plugins/nvidia-gpu/daemonset.yaml"
+
+7. create test pod by running "kubectl create -f hack/testdata/pod-with-gpu-req.yaml"
+
+###############################################################################################
+
+ 
+
+
+###################################### GOLANG ########################################
+
+#download current project related dependencies source code
+go get -d ./...
+
+# go get -d k8s.io/kubernetes ===
+git clone https://github.com/kubernetes/kubernetes /home/paas/src/k8s.io/kubernetes
+
+# download without certification, with verbose logging
+go get -insecure -v <file>
+
+********** control logging output 
+func usage() {
+	fmt.Fprintf(os.Stderr, "usage: example -stderrthreshold=[INFO|WARN|FATAL] -log_dir=[string]\n", )
+	flag.PrintDefaults()
+	os.Exit(2)
+}
+
+func init() {
+	flag.Usage = usage
+	// NOTE: This next line is key you have to call flag.Parse() for the command line 
+	// options or "flags" that are defined in the glog module to be picked up.
+	flag.Parse()
+}
+
+func main() {
+	number_of_lines := 100000
+	for i := 0; i < number_of_lines; i++ {
+		glog.V(2).Infof("LINE: %d", i)
+		message := fmt.Sprintf("TEST LINE: %d", i)
+		glog.Error(message)
+	}
+	glog.Flush()
+}
+
+go run ./test-program -v=10 --logtostderr=true
+  
+
+init() {
+	flag.Set("alsologtostderr", fmt.Sprintf("%t", true))
+	var logLevel string
+	flag.StringVar(&logLevel, "logLevel", "4", "test")
+	flag.Lookup("v").Value.Set(logLevel)
+}
+  
+  
+  
+  
+##################################### KUBERNETES ################################################
+
+*******************************   Kubectl Commands   **************************************
+
+# set a context utilizing a specific username and namespace.
+$ kubectl config set-context gce --user=cluster-admin --namespace=foo \
+  && kubectl config use-context gce
+
+
+********************************   docker commands   *********************************
+# run and enter into docker container
+docker run -it <image>:<v1.> sh
+
+# copy image to docker from host
+docker cp <file> <docker name>:/<path>
+
+# list all docker images
+docker images
+
+# save image to local tar file
+docker save <image-name> > <local name>
+
+# import local tar file to image
+docker import <local name> <image-name>:<tag>
+  
+#################################################################################################
+  
+
+
+#####################################  Script   ###########################################
+
+
+	
+*********************** master environment	********************
+# file /etc/profile
+
+# /etc/profile: system-wide .profile file for the Bourne shell (sh(1))
+# and Bourne compatible shells (bash(1), ksh(1), ash(1), ...).
+
+if [ "$PS1" ]; then
+  if [ "$BASH" ] && [ "$BASH" != "/bin/sh" ]; then
+    # The file bash.bashrc already sets the default PS1.
+    # PS1='\h:\w\$ '
+    if [ -f /etc/bash.bashrc ]; then
+      . /etc/bash.bashrc
+    fi
+  else
+    if [ "`id -u`" -eq 0 ]; then
+      PS1='# '
+    else
+      PS1='$ '
+    fi
+  fi
+fi
+
+if [ -d /etc/profile.d ]; then
+  for i in /etc/profile.d/*.sh; do
+    if [ -r $i ]; then
+      . $i
+    fi
+  done
+  unset i
+fi
+alias sue="sudo -E"
+export http_proxy=http://xxx.yyy.zzz205:3128
+export https_proxy=http://xxx.yyy.zzz205:3128
+export HTTP_PROXY=http://xxx.yyy.zzz205:3128
+export HTTPS_PROXY=http://xxx.yyy.zzz205:3128
+export no_proxy=localhost,127.0.0.1,10.168.0.35
+export MY_ETH0_IP=`/sbin/ifconfig ens3 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
+
+export GOROOT=/usr/local/go
+export GOPATH=/home/paas/src
+export PATH=$PATH:$GOROOT/bin:/usr/local/bin/:/usr/bin/
+
+
+
+************************  Docker    **********************************
+# get latest docker releases/download/v0
+wget --no-check-certificate https://get.docker.com/builds/Linux/x86_64/docker-17.04.0-ce.tgz
+
+# create http-proxy.conf under folder /etc/systemd/system/docker.service.d/
+$sudo vi /etc/systemd/system/docker.service.d/http-proxy.conf
+[Service]
+Environment="HTTP_PROXY=http://xxx.yyy.zzz205:3128/"
+Environment="HTTPS_PROXY=http://xxx.yyy.zzz205:3128/"
+
+# Ubuntu 14.04 proxy
+$sudo vi /etc/default/docker
+export http_proxy=http://xxx.yyy.zzz205:3128/
+export https_proxy=http://xxx.yyy.zzz205:3128/
+
+
+
+# Create docker.service under folder /lib/systemd/system/ with following content:
+$sudo vi /lib/systemd/system/docker.service
+[Unit]
+Description=Docker with flannel
+Requires=flannel.service
+After=flannel.service
+[Service]
+EnvironmentFile=/usr/local/conf/subnet.env
+ExecStart=/usr/local/bin/docker daemon --bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU} -s overlay
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=infinity
+Delegate=yes
+MountFlags=slave
+[Install]
+WantedBy=multi-user.target
+
+#create config file for docker
+$sudo vi /etc/docker/daemon.json
+{
+	"experimental": true
+}
+
+#But first, let's update the package database:
+$sudo apt-get update
+
+#Now let's install Docker. Add the GPG key for the official Docker repository to the system:
+$sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+
+#Add the Docker repository to APT sources:
+$sudo apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-xenial main'
+
+#Update the package database with the Docker packages from the newly added repo:
+sudo apt-get update
+
+#Make sure you are about to install from the Docker repo instead of the default Ubuntu 16.04 repo:
+$apt-cache policy docker-engine
+
+#You should see output similar to the follow:
+
+Output of apt-cache policy docker-engine
+docker-engine:
+  Installed: (none)
+  Candidate: 1.11.1-0~xenial
+  Version table:
+     1.11.1-0~xenial 500
+        500 https://apt.dockerproject.org/repo ubuntu-xenial/main amd64 Packages
+     1.11.0-0~xenial 500
+        500 https://apt.dockerproject.org/repo ubuntu-xenial/main amd64 Packages
+
+#Notice that docker-engine is not installed, but the candidate for installation is from the Docker repository for Ubuntu 16.04. The docker-engine version number might be different.
+
+#Finally, install Docker:
+sudo apt-get install -y docker-engine
+
+#Docker should now be installed, the daemon started, and the process enabled to start on boot. Check that it's running:
+$sudo systemctl status docker
+
+#The output should be similar to the following, showing that the service is active and running:
+Output
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+   Active: active (running) since Sun 2016-05-01 06:53:52 CDT; 1 weeks 3 days ago
+     Docs: https://docs.docker.com
+ Main PID: 749 (docker)
+#Installing Docker now gives you not just the Docker service (daemon) but also the docker command line utility, or the Docker client. We'll explore how to use the docker command later in this tutorial.
+
+#If you want to avoid typing sudo whenever you run the docker command, add your username to the docker group:
+sudo usermod -aG docker $(whoami)
+
+
+#set Docker logging level
+--log-level=debug, or
+--debug
+
+******************************** etcd   *************************************
+
+官方建议etcd集群的数量是奇数个，这样能保证在网络分割的时候不会选出来两个leader。这里我重点说下Static的方式，只要理解了这种方式 etc discovery就很好理解了。先来看下集群的启动命令：
+
+# etcd.conf file
+
+etcd1
+
+
+ETCD_DATA_DIR=/var/lib/etcd
+ETCD_NAME="my-etcd-1"
+ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+ETCD_ADVERTISE_CLIENT_URLS=http://10.168.0.6:2379
+ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+ETCD_INITIAL_ADVERTISE_PEER_URLS=http://10.168.0.6:2380
+ETCD_INITIAL_CLUSTER_TOKEN=my-etcd-token 
+ETCD_INITIAL_CLUSTER="my-etcd-1=http://10.168.0.6:2380,my-etcd-2=http://10.168.0.15:2380,my-etcd-3=http://10.168.0.14:2380"
+ETCD_INITIAL_CLUSTER_STATE=new
+GOMAXPROCS=$(nproc)
+
+
+etcd2
+
+
+ETCD_DATA_DIR=/var/lib/etcd
+ETCD_NAME="my-etcd-2"
+ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+ETCD_ADVERTISE_CLIENT_URLS=http://10.168.0.15:2379
+ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+ETCD_INITIAL_ADVERTISE_PEER_URLS=http://10.168.0.15:2380
+ETCD_INITIAL_CLUSTER_TOKEN=my-etcd-token 
+ETCD_INITIAL_CLUSTER="my-etcd-1=http://10.168.0.6:2380,my-etcd-2=http://10.168.0.15:2380,my-etcd-3=http://10.168.0.14:2380"
+ETCD_INITIAL_CLUSTER_STATE=new
+GOMAXPROCS=$(nproc)
+
+
+
+etcd3
+
+
+ETCD_DATA_DIR=/var/lib/etcd
+ETCD_NAME="my-etcd-3"
+ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+ETCD_ADVERTISE_CLIENT_URLS=http://10.168.0.14:2379
+ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+ETCD_INITIAL_ADVERTISE_PEER_URLS=http://10.168.0.14:2380
+ETCD_INITIAL_CLUSTER_TOKEN=my-etcd-token
+ETCD_INITIAL_CLUSTER="my-etcd-1=http://10.168.0.6:2380,my-etcd-2=http://10.168.0.15:2380,my-etcd-3=http://10.168.0.14:2380"
+ETCD_INITIAL_CLUSTER_STATE=new
+GOMAXPROCS=$(nproc)
+
+
+
+#etcd.service file, all etcd nodes have the same service file.
+  
+[Unit]
+Description=etcd
+Documentation=https://github.com/coreos/etcd
+Conflicts=etcd.service
+Conflicts=etcd2.service
+
+[Service]
+EnvironmentFile=/usr/local/conf/etcd.conf
+ExecStart=/usr/local/bin/etcd
+Restart=on-failure
+RestartSec=10s
+LimitNOFILE=40000
+Type=notify
+
+[Install]
+WantedBy=multi-user.target
+
+## to disable previous saved memeber information.
+--data-dir bak
+
+ 
+  
+/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --cluster-store=etcd://10.168.0.6:2379 --cluster-advertise=10.168.0.6:2375  
+
+/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock --cluster-store=etcd://10.168.0.14:2379 --cluster-advertise=10.168.0.14:2375  
+
+
+
+
+
+# On master node, configure flannel overlay configuration to /usr/local/conf/overlay.conf
+# 1. create file overlay.conf, and copy to /usr/local/conf/
+# 2. run etcdctl to set the key.
+
+
+
+1. Create a network configuration JSON file for the overlay network. Refer to the following example configuration:
+# cat flannel-config.json
+{
+"Network": "10.167.0.0/16",
+"SubnetLen": 24,
+"Backend": {
+"Type": "vxlan",
+"VNI": 1
+}
+}
+
+2. The Type attribute specifies the VXLAN back end. This requires the host kernel to have VXLAN support. As a quick way to validate VXLAN support in the host kernel, run the following command:
+# cat /boot/config-`uname -r` | grep CONFIG_VXLAN
+CONFIG_VXLAN=m
+
+3. Add the network configuration key to etcd, make sure this key is the same as defined in the flanneld.conf
+$etcdctl mkdir /coreos.com
+$etcdctl mkdir /coreos.com/network
+$etcdctl set /coreos.com/network/config < flannel-config.json
+
+
+
+
+**********************  flannel   *********************************************
+
+wget --no-check-certificate https://github.com/coreos/flannel/releases/download/v0.7.0/flannel-v0.7.0-linux-amd64.tar.gz
+
+cat <<EOF | sudo tee /etc/systemd/system/flanneld.service
+[Unit]
+Description=Flanneld
+Documentation=https://github.com/coreos/flannel
+After=network.target
+Before=docker.service
+ 
+[Service]
+User=root
+ExecStart=/usr/local/bin/flanneld \
+--public-ip="xxx.yyy.zzz250" \
+--etcd-prefix=/coreos.com/network \
+--subnet-file=/usr/local/conf/subnet.env \
+--etcd-endpoints="http://127.0.0.1:2379,http://10.168.0.6:2379, http://10.168.0.15:2379, http://10.168.0.14:2379" \
+--iface=${MY_ETH0_IP} \
+--ip-masq
+Restart=on-failure
+Type=notify
+LimitNOFILE=65536
+
+
+--public-ip="": IP accessible by other nodes for inter-host communication. Defaults to the IP of the interface being used for communication.
+--etcd-endpoints=http://127.0.0.1:4001: a comma-delimited list of etcd endpoints.
+--etcd-prefix=/coreos.com/network: etcd prefix.
+--etcd-keyfile="": SSL key file used to secure etcd communication.
+--etcd-certfile="": SSL certification file used to secure etcd communication.
+--etcd-cafile="": SSL Certificate Authority file used to secure etcd communication.
+--kube-subnet-mgr: Contact the Kubernetes API for subnet assignement instead of etcd or flannel-server.
+--iface="": interface to use (IP or name) for inter-host communication. Defaults to the interface for the default route on the machine.
+--subnet-file=/run/flannel/subnet.env: filename where env variables (subnet and MTU values) will be written to.
+--subnet-lease-renew-margin=60: subnet lease renewal margin, in minutes.
+--ip-masq=false: setup IP masquerade for traffic destined for outside the flannel network. Flannel assumes that the default policy is ACCEPT in the NAT POSTROUTING chain.
+--networks="": if specified, will run in multi-network mode. Value is comma separate list of networks to join.
+-v=0: log level for V logs. Set to 1 to see messages related to data path.
+--version: print version and exit
+
+
+
+
+
+
+**********************   Kubernetes		***********************************************
+
+wget --no-check-certificate https://github.com/kubernetes/kubernetes/releases/download/v1.6.1/kubernetes.tar.gz
+tar xzf kubernetes.tar.gz
+
+# run /cluster//get-kube-binaries.sh
+
+# change folder to kubernetes/client, to extract the archieve file kubernetes-client-linux-amd64.tar.gz
+# Copy folder kubernetes under current folder to /usr/local/bin/, and add path /usr/local/bin/kubernetes/client/bin to the system path.
+
+or 
+# change folder to kubernetes/server, to extract the archieve file kubernetes-client-linux-amd64.tar.gz
+# Copy folder kubernetes under current folder to /usr/local/bin/, and add path /usr/local/bin/kubernetes/server/bin to the system path.
+
+********************* [MASTER]  ********************
+
+#############  Common ####################
+
+/etc/kubernetes/config文件的内容为：
+###
+# kubernetes system config
+#
+# The following values are used to configure various aspects of all
+# kubernetes services, including
+#
+#   kube-apiserver.service
+#   kube-controller-manager.service
+#   kube-scheduler.service
+#   kubelet.service
+#   kube-proxy.service
+# logging to stderr means we get it in the systemd journal
+KUBE_LOGTOSTDERR="--logtostderr=true"
+
+# journal message level, 0 is debug
+KUBE_LOG_LEVEL="--v=0"
+
+# Should this cluster be allowed to run privileged docker containers
+KUBE_ALLOW_PRIV="--allow-privileged=true"
+
+# How the controller-manager, scheduler, and proxy find the apiserver
+#KUBE_MASTER="--master=http://sz-pg-oam-docker-test-001.tendcloud.com:8080"
+KUBE_MASTER="--master=http://10.168.0.13:8080"
+
+###################################
+
+#k8s API Server current
+
+创建 kube-apiserver的service配置文件
+serivce配置文件/etc/systemd/system/kube-apiserver.service内容：
+[Unit]
+Description=Kubernetes API Server
+Documentation=https://github.com/kubernetes/kubernetes
+After=network.target
+After=etcd.service
+ 
+[Service]
+User=root
+ExecStart=/usr/local/bin/kubernetes/server/bin/kube-apiserver \
+--admission-control=NamespaceLifecycle,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota \
+--advertise-address=10.168.0.13 --bind-address=10.168.0.13 --insecure-bind-address=10.168.0.13
+--secure-port=0 \
+--insecure-bind-address=${MY_ETH0_IP} \
+--insecure-port=8080 \
+--etcd-servers=http://10.168.0.6:2379,http://10.168.0.15:2379,http://10.168.0.14:2379 \
+--logtostderr=true \
+--allow-privileged=false \
+--apiserver-count=1 \
+--service-cluster-ip-range=${SERVICE_CLUSTER_IP_RANGE} \
+--service-node-port-range=30000-32767 \
+--advertise-address=${MY_ETH0_IP} \
+--v=2
+Restart=on-failure
+RestartSec=5
+Type=notify
+LimitNOFILE=65536
+ 
+[Install]
+WantedBy=multi-user.target
+
+# Remove TLS related configuration
+--client-ca-file=/srv/kubernetes/ca.crt \
+--tls-cert-file=/srv/kubernetes/server.crt \
+--tls-private-key-file=/srv/kubernetes/server.key
+
+##################  Standard    #################
+[Service]
+EnvironmentFile=-/etc/kubernetes/config
+EnvironmentFile=-/etc/kubernetes/apiserver
+ExecStart=/usr/local/bin/kube-apiserver \
+        $KUBE_LOGTOSTDERR \
+        $KUBE_LOG_LEVEL \
+        $KUBE_ETCD_SERVERS \
+        $KUBE_API_ADDRESS \
+        $KUBE_API_PORT \
+        $KUBELET_PORT \
+        $KUBE_ALLOW_PRIV \
+        $KUBE_SERVICE_ADDRESSES \
+        $KUBE_ADMISSION_CONTROL \
+        $KUBE_API_ARGS
+Restart=on-failure
+Type=notify
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+
+# apiserver配置文件/etc/kubernetes/apiserver内容为：
+###
+## kubernetes system config
+##
+## The following values are used to configure the kube-apiserver
+##
+#
+## The address on the local server to listen to.
+#KUBE_API_ADDRESS="--insecure-bind-address=sz-pg-oam-docker-test-001.tendcloud.com"
+KUBE_API_ADDRESS="--advertise-address=172.20.0.113 --bind-address=172.20.0.113 --insecure-bind-address=172.20.0.113"
+#
+## The port on the local server to listen on.
+#KUBE_API_PORT="--port=8080"
+#
+## Port minions listen on
+#KUBELET_PORT="--kubelet-port=10250"
+#
+## Comma separated list of nodes in the etcd cluster
+KUBE_ETCD_SERVERS="--etcd-servers=https://172.20.0.113:2379,172.20.0.114:2379,172.20.0.115:2379"
+#
+## Address range to use for services
+KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=20.168.0.0/16"
+#
+## default admission control policies
+KUBE_ADMISSION_CONTROL="--admission-control=ServiceAccount,NamespaceLifecycle,NamespaceExists,LimitRanger,ResourceQuota"
+#
+## Add your own!
+KUBE_API_ARGS="--authorization-mode=RBAC --runtime-config=rbac.authorization.k8s.io/v1beta1 --kubelet-https=true --experimental-bootstrap-token-auth --token-auth-file=/etc/kubernetes/token.csv --service-node-port-range=30000-32767 --tls-cert-file=/etc/kubernetes/ssl/kubernetes.pem --tls-private-key-file=/etc/kubernetes/ssl/kubernetes-key.pem --client-ca-file=/etc/kubernetes/ssl/ca.pem --service-account-key-file=/etc/kubernetes/ssl/ca-key.pem --etcd-cafile=/etc/kubernetes/ssl/ca.pem --etcd-certfile=/etc/kubernetes/ssl/kubernetes.pem --etcd-keyfile=/etc/kubernetes/ssl/kubernetes-key.pem --enable-swagger-ui=true --apiserver-count=3 --audit-log-maxage=30 --audit-log-maxbackup=3 --audit-log-maxsize=100 --audit-log-path=/var/lib/audit.log --event-ttl=1h"
+
+#################  14.04 #################
+
+#Kube-Apiserver Upstart and SysVinit configuration file
+KUBE_APISERVER=/usr/local/bin/kube-apiserver
+#KUBE_APISERVER_OPTS="--address=10.168.0.13 --port=8080 --etcd_servers=http://10.168.0.13:2379 --portal_net=15.1.1.0/24 --allow_privileged=true --kubelet_port=10250 --v=0"
+KUBE_APISERVER_OPTS="--apiserver-count=1 --advertise-address=10.168.0.13 --address=10.168.0.13 --port=8080 --etcd_servers=http://10.168.0.13:2379 --allow_privileged=true --kubelet_port=10250 --service-cluster-ip-range=20.168.0.0/16 --v=0"
+
+
+###############k8s kube-controller-manager ###################
+
+cat <<EOF | sudo tee /etc/systemd/system/kube-controller-manager.service
+[Unit]
+Description=Kubernetes Controller Manager
+Documentation=https://github.com/kubernetes/kubernetes
+ 
+[Service]
+User=root
+ExecStart=/usr/local/bin/kubernetes/server/bin/kube-controller-manager \
+--cluster-name=paas-trail \
+--master=${MASTER_IP} \
+--logtostderr=true \
+--v=2 
+Restart=on-failure
+LimitNOFILE=65536
+ 
+[Install]
+WantedBy=multi-user.target
+
+# Remove certificate related configuration
+--root-ca-file=/srv/kubernetes/ca.crt \
+--service-account-private-key-file=/srv/kubernetes/server.key \
+
+####################  Standard   ###########################
+
+# 创建 kube-controller-manager的serivce配置文件
+文件路径/etc/systemd/system/kube-controller-manager.service
+
+Description=Kubernetes Controller Manager
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+
+[Service]
+EnvironmentFile=-/etc/kubernetes/config
+EnvironmentFile=-/etc/kubernetes/controller-manager
+ExecStart=/usr/local/bin/kube-controller-manager \
+        $KUBE_LOGTOSTDERR \
+        $KUBE_LOG_LEVEL \
+        $KUBE_MASTER \
+        $KUBE_CONTROLLER_MANAGER_ARGS
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+
+配置文件/etc/kubernetes/controller-manager。
+###
+# The following values are used to configure the kubernetes controller-manager
+
+# defaults from config and apiserver should be adequate
+
+# Add your own!
+KUBE_CONTROLLER_MANAGER_ARGS="--address=127.0.0.1 --service-cluster-ip-range=20.168.0.0/16 --cluster-name=kubernetes --cluster-signing-cert-file=/etc/kubernetes/ssl/ca.pem --cluster-signing-key-file=/etc/kubernetes/ssl/ca-key.pem  --service-account-private-key-file=/etc/kubernetes/ssl/ca-key.pem --root-ca-file=/etc/kubernetes/ssl/ca.pem --leader-elect=true"
+
+#Note:
+
+--service-cluster-ip-range 参数指定 Cluster 中 Service 的CIDR范围，该网络在各 Node 间必须路由不可达，必须和 kube-apiserver 中的参数一致；
+--cluster-signing-* 指定的证书和私钥文件用来签名为 TLS BootStrap 创建的证书和私钥；
+--root-ca-file 用来对 kube-apiserver 证书进行校验，指定该参数后，才会在Pod 容器的 ServiceAccount 中放置该 CA 证书文件；
+--address 值必须为 127.0.0.1，因为当前 kube-apiserver 期望 scheduler 和 controller-manager 在同一台机器，否则：
+  $ kubectl get componentstatuses
+  NAME                 STATUS      MESSAGE                                                                                        ERROR
+  scheduler            Unhealthy   Get http://127.0.0.1:10251/healthz: dial tcp 127.0.0.1:10251: getsockopt: connection refused   
+  controller-manager   Healthy     ok                                                                                             
+  etcd-2               Unhealthy   Get http://172.20.0.113:2379/health: malformed HTTP response "\x15\x03\x01\x00\x02\x02"        
+  etcd-0               Healthy     {"health": "true"}                                                                             
+  etcd-1               Healthy     {"health": "true"}
+
+################## 14.04 ##################
+
+## default config file for kube-controller-manager
+## location /etc/default/kube-controller-manager
+
+export KUBERNETES_EXECUTABLE_LOCATION=/usr/local/bin
+
+KUBE_CONTROLLER_MANAGER=$KUBERNETES_EXECUTABLE_LOCATION/kube-controller-manager
+#KUBE_CONTROLLER_MANAGER_OPTS="--master=localhost:8080 --v=2"
+#KUBE_CONTROLLER_MANAGER_OPTS="--address=10.168.0.13 --master=10.168.0.13:8080 --v=0 "
+KUBE_CONTROLLER_MANAGER_OPTS="--cluster-name=paas-tetf --address=127.0.0.1 --master=10.168.0.13:8080 --service-cluster-ip-range=20.168.0.0/16 --v=0 "
+
+
+
+
+######################## kube-scheduler ##############################
+
+cat <<EOF | sudo tee /etc/systemd/system/kube-scheduler.service
+[Unit]
+Description=Kubernetes Scheduler
+Documentation=https://github.com/kubernetes/kubernetes
+ 
+[Service]
+User=root
+ExecStart=/usr/local/bin/kubernetes/server/bin/kube-scheduler \
+--logtostderr=true \
+--master=${MASTER_IP}:8080 \
+--leader-elect=true \
+--v=2
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+ 
+[Install]
+WantedBy=multi-user.target
+
+
+##################  Standard    #################
+
+创建 kube-scheduler的serivce配置文件
+文件路径/usr/lib/systemd/system/kube-scheduler.service。
+[Unit]
+Description=Kubernetes Scheduler Plugin
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+
+[Service]
+EnvironmentFile=-/etc/kubernetes/config
+EnvironmentFile=-/etc/kubernetes/scheduler
+ExecStart=/usr/local/bin/kube-scheduler \
+            $KUBE_LOGTOSTDERR \
+            $KUBE_LOG_LEVEL \
+            $KUBE_MASTER \
+            $KUBE_SCHEDULER_ARGS
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+配置文件/etc/kubernetes/scheduler。
+###
+# kubernetes scheduler config
+
+# default config should be adequate
+
+# Add your own!
+KUBE_SCHEDULER_ARGS="--leader-elect=true --address=127.0.0.1"
+
+--address 值必须为 127.0.0.1，因为当前 kube-apiserver 期望 scheduler 和 controller-manager 在同一台机器；
+
+
+################## 14.04 ##################
+
+#kube-scheduler config
+
+export KUBERNETES_EXECUTABLE_LOCATION=/usr/local/bin
+
+KUBE_SCHEDULER=$KUBERNETES_EXECUTABLE_LOCATION/kube-scheduler
+#KUBE_SCHEDULER_OPTS="--master=localhost:8080 --v=0 "
+KUBE_SCHEDULER_OPTS="--address=127.0.0.1 --master=10.168.0.13:8080 --v=0"
+
+
+#####################
+
+#reload, enable and start each master services.
+
+# systemctl daemon-reload
+# systemctl enable kube-controller-manager
+# systemctl enable kube-apiserver
+# systemctl enable kube-scheduler
+# systemctl start kube-controller-manager
+# systemctl start kube-apiserver
+# systemctl start kube-scheduler
+
+
+
+***********************  Kubelet  **********************************
+
+文件位置/usr/lib/systemd/system/kubelet.service。
+[Unit]
+Description=Kubernetes Kubelet Server
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+After=docker.service
+Requires=docker.service
+
+[Service]
+WorkingDirectory=/var/lib/kubelet
+EnvironmentFile=-/etc/kubernetes/config
+EnvironmentFile=-/etc/kubernetes/kubelet
+ExecStart=/usr/local/bin/kubelet \
+            $KUBE_LOGTOSTDERR \
+            $KUBE_LOG_LEVEL \
+            $KUBELET_API_SERVER \
+            $KUBELET_ADDRESS \
+            $KUBELET_PORT \
+            $KUBELET_HOSTNAME \
+            $KUBE_ALLOW_PRIV \
+            $KUBELET_POD_INFRA_CONTAINER \
+            $KUBELET_ARGS
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
+
+kubelet的配置文件/etc/kubernetes/kubelet。其中的IP地址更改为你的每台node节点的IP地址。
+###
+## kubernetes kubelet (minion) config
+#
+## The address for the info server to serve on (set to 0.0.0.0 or "" for all interfaces)
+KUBELET_ADDRESS="--address=172.20.0.113"
+#
+## The port for the info server to serve on
+#KUBELET_PORT="--port=10250"
+#
+## You may leave this blank to use the actual hostname
+KUBELET_HOSTNAME="--hostname-override=172.20.0.113"
+#
+## location of the api-server
+KUBELET_API_SERVER="--api-servers=http://172.20.0.113:8080"
+#
+## pod infrastructure container
+KUBELET_POD_INFRA_CONTAINER="--pod-infra-container-image=sz-pg-oam-docker-hub-001.tendcloud.com/library/pod-infrastructure:rhel7"
+#
+## Add your own!
+KUBELET_ARGS="--cgroup-driver=systemd --cluster-dns=10.254.0.2 --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig --kubeconfig=/etc/kubernetes/kubelet.kubeconfig --require-kubeconfig --cert-dir=/etc/kubernetes/ssl --cluster-domain=cluster.local. --hairpin-mode promiscuous-bridge --serialize-image-pulls=false"
+--address 不能设置为 127.0.0.1，否则后续 Pods 访问 kubelet 的 API 接口时会失败，因为 Pods 访问的 127.0.0.1 指向自己而不是 kubelet；
+如果设置了 --hostname-override 选项，则 kube-proxy 也需要设置该选项，否则会出现找不到 Node 的情况；
+--experimental-bootstrap-kubeconfig 指向 bootstrap kubeconfig 文件，kubelet 使用该文件中的用户名和 token 向 kube-apiserver 发送 TLS Bootstrapping 请求；
+管理员通过了 CSR 请求后，kubelet 自动在 --cert-dir 目录创建证书和私钥文件(kubelet-client.crt 和 kubelet-client.key)，然后写入 --kubeconfig 文件；
+建议在 --kubeconfig 配置文件中指定 kube-apiserver 地址，如果未指定 --api-servers 选项，则必须指定 --require-kubeconfig 选项后才从配置文件中读取 kube-apiserver 的地址，否则 kubelet 启动后将找不到 kube-apiserver (日志中提示未找到 API Server），kubectl get nodes 不会返回对应的 Node 信息;
+--cluster-dns 指定 kubedns 的 Service IP(可以先分配，后续创建 kubedns 服务时指定该 IP)，--cluster-domain 指定域名后缀，这两个参数同时指定后才会生效；
+
+通过 kublet 的 TLS 证书请求
+
+kubelet 首次启动时向 kube-apiserver 发送证书签名请求，必须通过后 kubernetes 系统才会将该 Node 加入到集群。
+查看未授权的 CSR 请求
+$ kubectl get csr
+NAME        AGE       REQUESTOR           CONDITION
+csr-2b308   4m        kubelet-bootstrap   Pending
+$ kubectl get nodes
+No resources found.
+通过 CSR 请求
+$ kubectl certificate approve csr-2b308
+certificatesigningrequest "csr-2b308" approved
+$ kubectl get nodes
+NAME        STATUS    AGE       VERSION
+10.64.3.7   Ready     49m       v1.6.1
+自动生成了 kubelet kubeconfig 文件和公私钥
+$ ls -l /etc/kubernetes/kubelet.kubeconfig
+-rw------- 1 root root 2284 Apr  7 02:07 /etc/kubernetes/kubelet.kubeconfig
+$ ls -l /etc/kubernetes/ssl/kubelet*
+-rw-r--r-- 1 root root 1046 Apr  7 02:07 /etc/kubernetes/ssl/kubelet-client.crt
+-rw------- 1 root root  227 Apr  7 02:04 /etc/kubernetes/ssl/kubelet-client.key
+-rw-r--r-- 1 root root 1103 Apr  7 02:07 /etc/kubernetes/ssl/kubelet.crt
+-rw------- 1 root root 1675 Apr  7 02:07 /etc/kubernetes/ssl/kubelet.key
+
+
+
+##############   14.04 ################################
+
+ echo "KUBELET_OPTS='--address=0.0.0.0 --port=10250 --max-pods=75 --docker_root=/data --hostname_override=$KUBERNETES_SLAVE_HOSTNAME --api_servers=http://$KUBERNETES_MASTER_HOSTNAME:8080 --enable_server=true --logtostderr=true --v=0 --maximum-dead-containers=10  --network-plugin=cni --network-plugin-dir=/etc/cni/net.d --cni-bin-dir=/opt/cni/bin'" | sudo tee -a /etc/default/kubelet
+
+
+##################  kube-proxy   ########################
+
+
+# 创建 kube-proxy 的service配置文件
+文件路径/usr/lib/systemd/system/kube-proxy.service。
+[Unit]
+Description=Kubernetes Kube-Proxy Server
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+After=network.target
+
+[Service]
+EnvironmentFile=-/etc/kubernetes/config
+EnvironmentFile=-/etc/kubernetes/proxy
+ExecStart=/usr/bin/kube-proxy \
+        $KUBE_LOGTOSTDERR \
+        $KUBE_LOG_LEVEL \
+        $KUBE_MASTER \
+        $KUBE_PROXY_ARGS
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+kube-proxy配置文件/etc/kubernetes/proxy。
+###
+# kubernetes proxy config
+
+# default config should be adequate
+
+# Add your own!
+KUBE_PROXY_ARGS="--bind-address=172.20.0.113 --hostname-override=172.20.0.113 --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig --cluster-cidr=20.168.0.0/16"
+--hostname-override 参数值必须与 kubelet 的值一致，否则 kube-proxy 启动后会找不到该 Node，从而不会创建任何 iptables 规则；
+kube-proxy 根据 --cluster-cidr 判断集群内部和外部流量，指定 --cluster-cidr 或 --masquerade-all 选项后 kube-proxy 才会对访问 Service IP 的请求做 SNAT；
+--kubeconfig 指定的配置文件嵌入了 kube-apiserver 的地址、用户名、证书、秘钥等请求和认证信息；
+预定义的 RoleBinding cluster-admin 将User system:kube-proxy 与 Role system:node-proxier 绑定，该 Role 授予了调用 kube-apiserver Proxy 相关 API 的权限；
+
+
+
+##############   14.04 ################################
+
+#echo -e "KUBE_PROXY_OPTS='--master=$KUBERNETES_MASTER_HOSTNAME:8080 --logtostderr=true'" | sudo tee -a /etc/default/kube-proxy
+echo -e "KUBE_PROXY_OPTS='--master=$KUBERNETES_MASTER_HOSTNAME:8080 --logtostderr=true --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig --cluster-cidr=20.168.0.0/16'" | sudo tee -a /etc/default/kube-proxy
+
+
+
+###################### kubeconfig  ################################
+
+#kubelet kubeconfig file
+
+$ cd config/k8s
+$ export KUBE_APISERVER="http://10.168.0.13:8080"
+$ # 设置集群参数
+$ kubectl config set-cluster kubernetes \
+  --server=${KUBE_APISERVER} \
+  --kubeconfig=bootstrap.kubeconfig
+$ # 设置上下文参数
+$ kubectl config set-context default \
+  --cluster=kubernetes \
+  --user=kubelet-bootstrap \
+  --kubeconfig=bootstrap.kubeconfig
+$ # 设置默认上下文
+$ kubectl config use-context default --kubeconfig=bootstrap.kubeconfig
+
+
+#kube-proxy kubeconfig file
+
+$ cd config/k8s
+$ export KUBE_APISERVER="http://10.168.0.13:8080"
+$ # 设置集群参数
+$ kubectl config set-cluster kubernetes \
+  --server=${KUBE_APISERVER} \
+  --kubeconfig=kube-proxy.kubeconfig
+$ # 设置上下文参数
+$ kubectl config set-context default \
+  --cluster=kubernetes \
+  --user=kube-proxy \
+  --kubeconfig=kube-proxy.kubeconfig
+$ # 设置默认上下文
+$ kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
+
+
+******************************  Kubectl  **********************************
+
+$ export KUBE_APISERVER="http://10.168.0.13:8080"
+$ # 设置集群参数
+$ kubectl config set-cluster kubernetes \
+  --server=${KUBE_APISERVER}
+$ # 设置上下文参数
+$ kubectl config set-context kubernetes \
+  --cluster=kubernetes \
+  --user=admin
+$ # 设置默认上下文
+$ kubectl config use-context kubernetes
+
+# 生成的 kubeconfig 被保存到 ~/.kube/config 文件
+
+
+
+##### exec container command from kubectl 
+
+kubectl cp /root/andy/config/apt.conf PODNAME:/etc/apt/
+kubectl exec -i PODNAME -- apt-get -y install fio
+kubectl exec -i PODNAME -- <app-command line>
+kubectl exec -it PODNAME /bin/bash
+
+
+  *****apt.conf content******
+   Acquire::http::proxy "http://xxx.yyy.zzz205:3128";
+   Acquire::https::proxy "http://xxx.yyy.zzz205:3128";
+
+
+
+*************************** Ipvlan  **********************************
+
+#Use Docker experimental
+
+Experimental features are now included in the standard Docker binaries as of version 1.13.0. To enable experimental features, start the Docker daemon with the --experimental flag or enable the daemon flag in the /etc/docker/daemon.json configuration file:
+
+{
+    "experimental": true
+}
+
+$sudo systemctl restart docker
+
+You can check to see if experimental features are enabled on a running daemon using the following command:
+$ docker version -f '{{.Server.Experimental}}'
+true
+
+To check your current kernel version, use uname -r to display your kernel version
+
+Ipvlan Linux kernel v4.2+ (support for earlier kernels exists but is buggy)
+
+
+
+***************************  Docker  ******************************
+
+docker network create -d overlay \
+  --subnet=10.169.0.0/16 \
+  --subnet=10.170.0.0/16 \
+  --gateway=10.169.0.1 \
+  --gateway=10.170.0.1 \
+  --ip-range=10.169.0.0/24 \
+  --aux-address="my-router=192.168.1.5" --aux-address="my-switch=192.168.1.6" \
+  --aux-address="my-printer=192.170.1.5" --aux-address="my-nas=192.170.1.6" \
+  my-multihost-network
+  
+  
+  
+
+
+*******************************  test environment *********************************
+Start the cluster
+FEATURE_GATES=DynamicLocalStorageProvisioning=true LOG_LEVEL=6 ./hack/local-up-cluster.sh
+
+Scheduler might miss the feature on flag so check and restart it:
+Export PAAS_CTYPTO_PATH=/var/run/kubernetes
+/paas-usa/src/k8s.io/kubernetes/_output/local/bin/linux/amd64/hyperkube scheduler --v=6 --kubeconfig /var/run/kubernetes/scheduler.kubeconfig --master=https://127.0.0.1:6443 --feature-gates=DynamicLocalStorageProvisioning=true
+
+Start the local volume provisioner
+Export PAAS_CTYPTO_PATH=/var/run/kubernetes
+./_output/bin/local-volume-provisioner --local-volume-provisioner-name=local_volume_provisioner_ --api-server=https://127.0.0.1:6443 --host-name=127.0.0.1 --kubeconfigpath=/var/run/kubernetes/kubelet.kubeconfig -v 6 --local-storage-manager-config-path=/var/paas/config/local-storage-provisioner.config
+
+Start tests
+Copy the tests from this path:
+Scp root@xxx.yyy.zzz81:/testcases/ ./
+
+Create the SC
+Kubectl create –f createSc.yaml
+
+Create the ns
+Kubectl create ns test
+
+Testing, us test3-9.yaml as an example
+Create pvc
+Kubectl create –f pvc3-9.yaml
+Kubectl create –f test3-9.yaml
+
+Ad hoc test create, delete check mount , file, /etc/fstab etc.
+
+Combination of lvm state and config file state
+
+Leave an dangling invalid mount moint in /etc/fstab file and reboot the VM – this can be tested on separated VM – you can use xxx.yyy.zzz223 ( or other machine we can afford to reset )
+
+
+******************************
+export no_proxy=localhost,127.0.0.1,xxx.yyy.zzz.217
+pkill kubelet
+pkill kube-proxy
+rm *.log
+rm -r /var/lib/rook
+systemctl stop docker
+rm -rf /var/lib/cni/
+rm -rf /var/lib/kubelet/*
+rm -rf /etc/cni/
+ifconfig cni0 down
+ifconfig flannel.1 down
+ifconfig docker0 down
+ip link delete cni0
+ip link delete flannel.1
+systemctl restart docker
+./slave-setup-k8s.sh
+
+pkill -ef './kube'
+pkill etcd
+ps -ef | grep kube
+rm *.log
+rm etcdlog
+rm -r default.etcd
+./k8s-master-up.sh
+
+ls -ltr /var/lib/kubelet/device-plugins/
+
+
+########################### setup master #####################################
+
+#!/bin/bash
+set -x
+
+pkill -ef './etcd'
+pkill -ef './kube'
+
+mv ./apiserver.log ./apiserver.old.log
+mv ./controller-manager.log ./controller-manager.old.log
+mv ./scheduler.log ./scheduler.old.log
+
+masterIP="xxxxxxxxxxxxx"
+export PAAS_CRYPTO_PATH="/var/run/kubernetes"
+
+secrets_path=/root/go/k8s-setup/secrets
+secret_options="--service-account-key-file=$secrets_path/server_encrypted.key --tls-cert-file=$secrets_path/ca.crt --client-ca-file=$secrets_path/ca.crt --tls-cert-file=$secrets_path/server.crt --tls-private-key-file=$secrets_path/server_encrypted.key"
+
+pushd /root/go/k8s-setup
+k8s_path=/root/go/src/k8s.io/kubernetes/_output/bin
+
+# update datetime with dev machine
+date -u -s "$(ssh paas@xxxxxxxxxxxxx.28 date -u)"
+
+# update binaries from dev machine
+# rsync -tr paas@xxx.yyy.zzz228:/home/paas/go/src/k8s.io/kubernetes/_output/bin/ ${k8s_path}/
+#rsync -tr paas@xxx.yyy.zzz222:/home/paas/src/k8s.io/kubernetes/_output/bin/ ${k8s_path}/
+# rsync -tr root@xxx.yyy.zzz81:/test/src/k8s.io/kubernetes/_output/bin/ ${k8s_path}/
+
+rm *.log
+rm etcdlog
+rm -r default.etcd
+
+./etcd --listen-client-urls=http://0.0.0.0:4001 --advertise-client-urls=http://$masterIP:4001 > etcdlog 2>&1 &
+
+apiserver_options="--feature-gates=DevicePlugins=true,MultiGPUScheduling=true,NUMAScheduling=true,CPUManager=true --admission-control Initializers,NamespaceLifecycle,LimitRanger,ResourceQuota,DefaultTolerationSeconds --allow-privileged --authorization-mode AlwaysAllow"
+$k8s_path/kube-apiserver $secret_options $apiserver_options --anonymous-auth=false --etcd-servers=http://xxx.yyy.zzz.217:4001 --service-cluster-ip-range=30.10.10.0/24 --bind-address=xxx.yyy.zzz.217 --insecure-bind-address=xxx.yyy.zzz.217 --insecure-port=8888 --service-node-port-range='53-65535' --allow-privileged=true --v=7 > apiserver.log 2>&1 &
+
+sleep 1
+controller_manager_options="--root-ca-file=$secrets_path/ca.crt --service-account-private-key-file=$secrets_path/server_encrypted.key "
+controller_manager_network_options="--cluster-cidr=30.10.0.0/16 --allocate-node-cidrs=true "
+$k8s_path/kube-controller-manager  $controller_manager_network_options --master=$masterIP:8888 --controllers=*,-event,-metric --v=4 > controller-manager.log 2>&1 &
+
+sleep 1
+$k8s_path/kube-scheduler --feature-gates=DevicePlugins=true,MultiGPUScheduling=true --address=$masterIP --master=$masterIP:8888 --v=10 > scheduler.log 2>&1 &
+
+popd
+
+
+################################ setup slave ###################################
+pkill kubelet
+pkill kube-proxy
+
+k8s_path=/root/go/src/k8s.io/kubernetes/_output/bin
+exec_path=/root/go/k8s-setup
+
+# update datetime with dev machine
+date -u -s "$(ssh paas@xxx.yyy.zzz228 date -u)"
+
+# update binaries from dev machine
+#rsync -tr paas@xxx.yyy.zzz228:/home/paas/go/src/k8s.io/kubernetes/_output/bin/ ${k8s_path}/
+# rsync -tr paas@xxx.yyy.zzz91:/home/paas/src/k8s.io/kubernetes/_output/bin/ ${k8s_path}/
+
+
+masterIP=http://xxx.yyy.zzz.217:8888
+localIP=`ifconfig enp2s0f0|grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' |grep -Eo '([0-9]*\.){3}[0-9]*'`
+echo "using local IP $localIP"
+
+# install go
+if [ -f /usr/lib/go/bin/go ]; then
+   rsync -tr /usr/lib/go /usr/lib
+   echo "remember to add /usr/lib/go/bin to PATH"
+fi
+
+mkdir -p $exec_path
+pushd $exec_path
+
+rsync -t $k8s_path/kube-proxy ./kube-proxy
+echo "copied kube-proxy!"
+
+./kube-proxy --master=$masterIP --resource-container= --hostname-override=$localIP --v=6 > kube-proxy.log 2>&1 &
+
+rsync -t $k8s_path/kubelet ./kubelet
+echo "copied kubelet!"
+
+# Delete kubelet log
+cp ./kubelet.log ./kubelet.old.log
+echo "" > ./kubelet.log
+rm /var/lib/kubelet/device-plugins/*.sock
+# rm /var/lib/kubelet/device-plugins/kubelet_internal_checkpoint
+
+MASTER_CLUSTER_IP=xxx.yyy.zzz.217 KUBERNETES_SERVICE_HOST=xxx.yyy.zzz.217 KUBERNETES_SERVICE_PORT=6443 ./kubelet  --feature-gates=DevicePlugins=true,MultiGPUScheduling=true,NUMAScheduling=true,CPUManager=true,Accelerators=true --kube-reserved=cpu=4000m --cpu-manager-policy=static --kubeconfig=$exec_path/kubeconfig --fail-swap-on=false --allow-privileged --cgroup-root=/ --hostname-override=$localIP --cluster-domain=cluster.local --v=6 > kubelet.log 2>&1 &
+
+popd
+#mknod -m 660 /dev/nvidia-uvm c 249 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
